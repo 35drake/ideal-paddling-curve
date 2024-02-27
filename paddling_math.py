@@ -38,9 +38,11 @@ def debug_area_find(my_graph):
 
 # This function takes a graph/table of values, and calculates the total paddling time
 def paddling_time(my_graph):
+	loud = False #For print statements
 	# my_graph looks like [ [0,1,2][0,0.5,0.6] ] or something. Dim could be anything though. As in the dimensions are as such: my_graph[2,?]
 	
-	print("\nNow calculating the total paddling time of the graph with data set:",my_graph)
+	if loud:
+		print("\nNow calculating the total paddling time of the graph with data set:",my_graph)
 
 	# Grab the dimension of the graph (aka the number of points) cuz it wasn't passed
 	dimension = len(my_graph[0])
@@ -54,8 +56,9 @@ def paddling_time(my_graph):
 	
 	# Loop through every yellow region, to find how long the paddler spent in that region, and also their new velocity coming out of that region
 	for region in range(0,dimension-1): #note that there is 1 more pair of points than there are graph regions
-		print("\nNow starting calculations for Yellow region",region,"of",dimension)
-		print("with args",v0,xspan,my_graph[1][region],my_graph[1][region+1])
+		if loud:
+			print("\nNow starting calculations for Yellow region",region,"of",dimension)
+			print("with args",v0,xspan,my_graph[1][region],my_graph[1][region+1])
 
 		yellow_output = yellow(v0,xspan,my_graph[1][region],my_graph[1][region+1]) #Bulk of the math is done with yellow(). I only wanna run yellow() once, so I'm storing its 2 results in the yellow_output[] list
 		
@@ -70,6 +73,7 @@ def yellow(v0, xspan, y0, yf):
 	m = 100 #paddler mass
 	B = 0.41 #drag factor
 	steps = 30 #how many iterations you wanna do for a yellow region
+	loud = False
 
 	
 
@@ -89,11 +93,13 @@ def yellow(v0, xspan, y0, yf):
 
 	# iterate through the whole yellow region to acquire the list of all the paddler's velocities after each iteration. Since the real velocity equation is complicated, we're going to iterate and find the next v value by using the previous v value in the calculation.
 	for count in range(0,steps):
-		print("\nNow using velocity #" + str(count) + " of " + str(v[count]) + " to find velocity #" + str(count+1) )
+		if loud:
+			print("\nNow using velocity #" + str(count) + " of " + str(v[count]) + " to find velocity #" + str(count+1) )
 
 		# Find the integral of all the v-squared's that have been found so far. Basically a Riemann sum, where each Riemann piece has width of xspan/steps. In theory we shouldn't sum the whole v-squared list, but only up to the current value. But I don't care since any future values are still 0 for now.
 		integral = xspan / steps * sum(v_squared)
-		print("The integral (showing drag so far) is",integral)
+		if loud:
+			print("The integral (showing drag so far) is",integral)
 
 		# Find the little d, which is the distance gone so far into the yellow region
 		d = xspan / steps * (count+1) #If you don't add the plus one, then you're stalled for v[0] --> v[1]. Not sure what's mathematically better though
@@ -109,14 +115,15 @@ def yellow(v0, xspan, y0, yf):
 	t_spent_here = 0 
 	for count in range(0,steps):
 		t_spent_here = t_spent_here + 1/v[count+1] * xspan/steps
-	
-	print("Yellow region done with final velocity",v[steps],"and local time",t_spent_here,"\n")
+	if loud:
+		print("Yellow region done with final velocity",v[steps],"and local time",t_spent_here,"\n")
 
 	# This line seems to conflict with pygame's graphics window
 	# unused_var = input()
 
 	# return [v_final,t_spent_here]
 	return [v[steps],t_spent_here] #Note that v[steps] exists and is the final item in v[]
+
 
 
 

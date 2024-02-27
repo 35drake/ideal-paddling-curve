@@ -17,7 +17,9 @@ def randtable(dim, xmax, ymax):
 
 
 # Parameters are screen width and length (by pixels), the x values list, and the y values list
-def grapher(screen_size,lines,combined_x_and_y_lists):
+def grapher(wait_time,screen_size,lines,combined_x_and_y_lists):
+	loud = False #for print statements
+	point_size = 5 #Basically the height and width of each point, in pygame pixels. I recommend 3 to 8.
 	x_list = combined_x_and_y_lists[0]
 	y_list = combined_x_and_y_lists[1]
 	# manage error conditions
@@ -44,14 +46,15 @@ def grapher(screen_size,lines,combined_x_and_y_lists):
 
 	# Draw all points, and make them thick
 	for count in range(0,len(x_list)):
-		print("Graphing point [" , x_list[count] , "," , y_list[count] , "]")
+		if loud:
+			print("Graphing point [" , x_list[count] , "," , y_list[count] , "]")
 
 		x_location = 0.1+0.8*(x_list[count]/max_x)
 		y_location = 0.9-0.8*(y_list[count]/max_y)
 
-		for pixel_widening in range(-2,3):
-			for pixel_lengthening in range(-2,3):
-				if not(abs(pixel_widening) == 2 and abs(pixel_lengthening) == 2): # This will round the points instead of making them 5x5 squares
+		for pixel_widening in range(1-point_size,point_size):
+			for pixel_lengthening in range(1-point_size,point_size):
+				if not(abs(pixel_widening) == point_size-1 and abs(pixel_lengthening) == point_size-1): # This will round the points instead of making them 5x5 squares
 					# Note how below, the "draw.line" function isn't used to draw a line but only one point (one pixel)
 					pygame.draw.line(my_screen,(200,150,0), (pixel_widening+int(screen_size*x_location),pixel_lengthening+int(screen_size*y_location)) , (pixel_widening+int(screen_size*x_location),pixel_lengthening+int(screen_size*y_location))    )
 
@@ -59,19 +62,23 @@ def grapher(screen_size,lines,combined_x_and_y_lists):
 		if lines and count!=len(x_list)-1:
 			x_location2 = 0.1+0.8*(x_list[count+1]/max_x)
 			y_location2 = 0.9-0.8*(y_list[count+1]/max_y)
-			pygame.draw.line(my_screen,(200,100,40), ( int(screen_size*x_location) , int(screen_size*y_location) ) , (int(screen_size*x_location2) , int(screen_size*y_location2) ) )
+			for pixel in range(1-point_size, point_size):
+				# note that for now I'm only thickening these lines vertically. Which means, lines that are very vertical will still be thin and look kinda ugly.
+				pygame.draw.line(my_screen,(200,100,40), ( int(screen_size*x_location) , int(screen_size*y_location)+pixel ) , (int(screen_size*x_location2) , int(screen_size*y_location2)+pixel ) )
 			
 
 	# render the whole screen
 	pygame.display.flip()
 
-  	# keep screen open until user quits
-	keep_running = True
-	while keep_running:
-	        for event in pygame.event.get():
-	            # only do something if the event is type QUIT
-	            if event.type == pygame.QUIT:
-	                keep_running = False
-
-	# Pause the program for a second so that the graphics window can fully close (if the user x'd it out)
-	# time.sleep(1) NVM THIS DOESN'T FIX IT
+	# Decide how to close the graph. Either wait till the user x's it out, or pause for the wait time before closing on it own
+	if wait_time == "x":
+	  	# keep screen open until user quits
+		keep_running = True
+		while keep_running:
+		        for event in pygame.event.get():
+		            # only do something if the event is type QUIT
+		            if event.type == pygame.QUIT:
+		                keep_running = False
+	else:
+		# wait_time is hopefully a number
+		time.sleep(wait_time)
