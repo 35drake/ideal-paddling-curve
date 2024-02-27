@@ -3,6 +3,7 @@ import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide" #This suppresses the annoying PyGame welcome message
 import pygame
 import random #For randtable()
+import time #For sleep()
 
 # Generate a list of two lists of points; the y vals are random but the xvals are equidistant. Goes through the origin.
 def randtable(dim, xmax, ymax):
@@ -71,3 +72,6 @@ def grapher(screen_size,lines,combined_x_and_y_lists):
 	            # only do something if the event is type QUIT
 	            if event.type == pygame.QUIT:
 	                keep_running = False
+
+	# Pause the program for a second so that the graphics window can fully close (if the user x'd it out)
+	# time.sleep(1) NVM THIS DOESN'T FIX IT

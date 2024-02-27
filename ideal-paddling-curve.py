@@ -48,7 +48,7 @@ graphs_list = graphs_list + [ normalize(Energy, randtable(dimension,x_max,y_max)
 grapher(800,True,graphs_list[0])
 
 # Double check that its area is correct
-print(debug_area_find(graphs_list[0]) , "should be be approx" , Energy)
+print("\nThe total paddler energy on this graph is", debug_area_find(graphs_list[0]) , " which should be be approx" , Energy)
 
 
 

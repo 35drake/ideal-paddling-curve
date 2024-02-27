@@ -40,6 +40,8 @@ def debug_area_find(my_graph):
 def paddling_time(my_graph):
 	# my_graph looks like [ [0,1,2][0,0.5,0.6] ] or something. Dim could be anything though. As in the dimensions are as such: my_graph[2,?]
 	
+	print("\nNow calculating the total paddling time of the graph with data set:",my_graph)
+
 	# Grab the dimension of the graph (aka the number of points) cuz it wasn't passed
 	dimension = len(my_graph[0])
 
@@ -52,7 +54,11 @@ def paddling_time(my_graph):
 	
 	# Loop through every yellow region, to find how long the paddler spent in that region, and also their new velocity coming out of that region
 	for region in range(0,dimension-1): #note that there is 1 more pair of points than there are graph regions
-		yellow_output = yellow(v0,xspan,my_graph[1][region],my_graph[1][region+1]) #Bulk of the math is done with yellow()
+		print("\nNow starting calculations for Yellow region",region,"of",dimension)
+		print("with args",v0,xspan,my_graph[1][region],my_graph[1][region+1])
+
+		yellow_output = yellow(v0,xspan,my_graph[1][region],my_graph[1][region+1]) #Bulk of the math is done with yellow(). I only wanna run yellow() once, so I'm storing its 2 results in the yellow_output[] list
+		
 		v0 = yellow_output[0] #this is the final velocity output by yellow()
 		time_total_so_far = time_total_so_far + yellow_output[1]
 
@@ -62,8 +68,10 @@ def paddling_time(my_graph):
 def yellow(v0, xspan, y0, yf):
 	# SET THE IMPORTANT VARIBLES
 	m = 100 #paddler mass
-	B = 4.1 #drag factor
+	B = 0.41 #drag factor
 	steps = 30 #how many iterations you wanna do for a yellow region
+
+	
 
 	# calculate the variable "A", see Google Document for what this refers to
 	A = (yf - y0) / xspan
@@ -72,32 +80,40 @@ def yellow(v0, xspan, y0, yf):
 
 	# initialize the v list; this will hold every velocity along the yellow region, including the end velocity
 	v = [-41] * (steps + 1) # negative 41 is just a placeholder value
-	v[0] = v0
+	v[0] = v0 #Remember; v0 will be zero for the first yellow region, but probably not when we're dealing with any other yellow region
 
 	# initialize the v-squared list; this holds all the squares of the velocities found so far. Note: since I'm using sum(), it's important that this list is initialized with zeroes
 	# We have to keep a list of v-squared's and not just the current value, because of how we're iterating over the intergral of v-squared.
 	v_squared = [0] * (steps+1)
-	v_squared[0] = v0**2 #clearly zero but I added the line for clarity
+	v_squared[0] = v0**2 #won't be equal to zero for every yellow region! Just the first one pretty much
 
 	# iterate through the whole yellow region to acquire the list of all the paddler's velocities after each iteration. Since the real velocity equation is complicated, we're going to iterate and find the next v value by using the previous v value in the calculation.
 	for count in range(0,steps):
+		print("\nNow using velocity #" + str(count) + " of " + str(v[count]) + " to find velocity #" + str(count+1) )
 
 		# Find the integral of all the v-squared's that have been found so far. Basically a Riemann sum, where each Riemann piece has width of xspan/steps. In theory we shouldn't sum the whole v-squared list, but only up to the current value. But I don't care since any future values are still 0 for now.
 		integral = xspan / steps * sum(v_squared)
+		print("The integral (showing drag so far) is",integral)
 
 		# Find the little d, which is the distance gone so far into the yellow region
-		d = xspan / steps * count
+		d = xspan / steps * (count+1) #If you don't add the plus one, then you're stalled for v[0] --> v[1]. Not sure what's mathematically better though
 
 		# Iterate to get the next velocity, using the current velocity
 		# v[count+1] = equation that uses v[count]
 		v[count+1] = ( v0**2 + 2*y0*d/m + A*d*d/m - 2*B/m*integral ) ** 0.5
 		v_squared[count+1] = v[count+1]**2	
 
-	t_spent_here = 41
-	# use the list of velocities to find t_spent_here (hint: it's the area under the "1/v vs d" curve)
-	pass
 
+	# Use the list of velocities to find t_spent_here (hint: it's the area under the "1/v vs d" curve)
+	# Instead of using a left Riemann sum, I'm gonna use a right Riemann sum. This is because we're summing 1/v , and I know v0 is going to be zero for the first point of the first yellow region.
+	t_spent_here = 0 
+	for count in range(0,steps):
+		t_spent_here = t_spent_here + 1/v[count+1] * xspan/steps
+	
+	print("Yellow region done with final velocity",v[steps],"and local time",t_spent_here,"\n")
 
+	# This line seems to conflict with pygame's graphics window
+	# unused_var = input()
 
 	# return [v_final,t_spent_here]
 	return [v[steps],t_spent_here] #Note that v[steps] exists and is the final item in v[]
