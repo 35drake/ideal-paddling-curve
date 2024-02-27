@@ -71,8 +71,8 @@ def paddling_time(my_graph):
 def yellow(v0, xspan, y0, yf):
 	# SET THE IMPORTANT VARIBLES
 	m = 100 #paddler mass
-	B = 0.41 #drag factor
-	steps = 30 #how many iterations you wanna do for a yellow region
+	B = 1000 #drag factor
+	steps = 300 #how many iterations you wanna do for a yellow region
 	loud = False
 
 	

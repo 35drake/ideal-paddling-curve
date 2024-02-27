@@ -12,8 +12,9 @@ from paddling_math import debug_area_find
 # Step 0: Initialize the program
 # -----------------------------------------
 # Variables to set:
-dimension = 5 
+dimension = 10
 tweak_ratio = 1.01 #This (and its multiplicative inverse) are the ratios by which points will increase their y values when tweaked
+
 x_max = 1
 y_max = 5
 factor = 0.26 # This represents what fraction of the Force vs. Distance graph we're allowed to occupy. Essentially it determines the paddler's total energy. Literally, the physics equation "E=d*F" applies as "TotalEnergy = factor * x_max * y_max" . 
@@ -33,12 +34,6 @@ graphs_list = [] #This will be a 3d array. Reference it like so: graphs_list[gra
 
 # NOTE: graphs_list will not contain every graph we try. Only the best graphs so far. So, after the program's done, each graph stored in this list will be better than the prev.
 
-#demo to show how to reference graphs_list:
-#graphs_list = graphs_list + [randtable(dimension,1,5)]
-#graphs_list = graphs_list + [randtable(dimension,1,5)]
-#print(graphs_list)
-#print(graphs_list[1][1][3])
-#exit()
 
 
 # Step 1: generate a random graph to start with
@@ -46,8 +41,6 @@ graphs_list = [] #This will be a 3d array. Reference it like so: graphs_list[gra
 
 
 graphs_list = graphs_list + [ normalize(Energy, randtable(dimension,x_max,y_max)) ]
-# Show off the graph that was just created
-grapher("x",800,True,graphs_list[0])
 
 # Double check that its area is correct
 if loud:
@@ -56,12 +49,17 @@ if loud:
 
 # Calculate the paddling time of this graph
 best_time_so_far = paddling_time(graphs_list[0])
+print("Time of this original graph is",best_time_so_far)
+
+# Show off the graph that was just created
+grapher("x",800,True,graphs_list[0])
 
 
-
-if loud:
-	print("Time of this original graph is",best_time_so_far)
 # Note: we don't need to keep an index to keep track of which graph in graphs_list has been the best so far, BECAUSE the last graph in it is the best. We won't add inferior graphs to graphs_list[]
+
+
+
+
 
 
 # Step 2: Tweak current/best graph slightly, by moving one point up then down. Start with the first point and move onto the next point and so on. When a point change makes a superior graph, then set that graph to be the new current graph, and start this step over again. If you end up changing all points up/down but have never made a superior graph, then we're done.
@@ -93,7 +91,8 @@ while potentially_perfect_run == False: #We're gonna loop through this loop unti
 					graphs_list = graphs_list + [testing_graph]
 					# set the new best paddling time, corresponding to the new best graph we just got
 					best_time_so_far = testing_time
-					print(best_time_so_far,"sec")
+					if loud:
+						print(best_time_so_far,"sec")
 					# note that this run is not a perfect run, so the old graph was not the end solution
 					potentially_perfect_run = False
 				else:
@@ -110,14 +109,19 @@ while potentially_perfect_run == False: #We're gonna loop through this loop unti
 
 
 
-# Step 3: Show the best graph made, and even show some text on the graph image. 
+# Step 3: Show the best graph made, and even show some text on the graph image(?)
 # -----------------------------------------
 
+print("Time of this final graph is",best_time_so_far)
+grapher("x",800,True,graphs_list[-1])
 
 
-# Step 4:
+
+# Step 4: Flash through a bunch of graphs to show progress
 # -----------------------------------------
 
+# Step 5: Create a graph, based on calculations of the final graph, that shows the paddler's distance over time
+# -----------------------------------------
 
 
 
