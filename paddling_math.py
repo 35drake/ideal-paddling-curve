@@ -72,7 +72,7 @@ def yellow(v0, xspan, y0, yf):
 	# SET THE IMPORTANT VARIBLES
 	m = 100 #paddler mass
 	B = 1000 #drag factor
-	steps = 300 #how many iterations you wanna do for a yellow region
+	steps = 600 #how many iterations you wanna do for a yellow region
 	loud = False
 
 	

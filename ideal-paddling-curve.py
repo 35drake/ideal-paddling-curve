@@ -12,8 +12,8 @@ from paddling_math import debug_area_find
 # Step 0: Initialize the program
 # -----------------------------------------
 # Variables to set:
-dimension = 10
-tweak_ratio = 1.01 #This (and its multiplicative inverse) are the ratios by which points will increase their y values when tweaked
+dimension = 30 #recommend 15
+tweak_ratio = 1.0005 #This (and its multiplicative inverse) are the ratios by which points will increase their y values when tweaked
 
 x_max = 1
 y_max = 5
@@ -123,7 +123,7 @@ grapher("x",800,True,graphs_list[-1])
 # Step 5: Create a graph, based on calculations of the final graph, that shows the paddler's distance over time
 # -----------------------------------------
 
-
+# Idea: run the program with a very high tweak ratio (ie 1.1). Then, run again, using the prev end result as the start graph -- but lower the tweak ratio (ie 1.05). And so on.
 
 
 
